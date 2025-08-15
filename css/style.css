@@ -2065,7 +2065,7 @@ footer::before {
 
 /* Estilos para a logo no navbar */
 .navbar-logo {
-    height: 30px;
+    height: 40px;
     width: auto;
     transition: transform 0.3s ease;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
@@ -2077,7 +2077,7 @@ footer::before {
 
 /* Estilos para a logo no hero section */
 .hero-logo {
-    height: 80px;
+    height: 100px;
     width: auto;
     margin-bottom: 20px;
     animation: fadeInUp 1s ease;
