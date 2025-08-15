@@ -2087,10 +2087,10 @@ footer::before {
 /* Ajustes para dispositivos móveis */
 @media (max-width: 768px) {
     .navbar-logo {
-        height: 20px;
+        height: 30px;
     }
     
     .hero-logo {
-        height: 60px;
+        height: 80px;
     }
 }
