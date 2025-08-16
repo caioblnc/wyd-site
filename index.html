@@ -311,8 +311,8 @@
                                     <p>Adicionar foto</p>
                                 </div>
                             </div>
-                            <input type="file" id="productImages" accept="image/*" multiple onchange="previewMultipleImages(event)" class="d-none">
-                        </div>
+                                <input type="file" id="productImages" accept="image/*" multiple capture="environment" onchange="previewMultipleImages(event)" class="d-none">
+                            </div>
                         <small class="text-muted">Você pode adicionar até 5 fotos. Clique em "Adicionar foto" ou arraste as imagens.</small>
                     </div>
                     
@@ -619,12 +619,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Debug Panel -->
-    <button id="debugToggle" onclick="toggleDebug()">Debug</button>
-    <div id="debugPanel">
-        <div id="debugContent"></div>
     </div>
     
     <!-- Firebase SDK -->
