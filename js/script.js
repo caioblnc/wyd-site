@@ -1,20 +1,5 @@
-// Debug functions
-function toggleDebug() {
-    const panel = document.getElementById('debugPanel');
-    panel.classList.toggle('show');
-}
-
-function debugLog(message) {
-    console.log(message);
-    const debugContent = document.getElementById('debugContent');
-    const timestamp = new Date().toLocaleTimeString();
-    debugContent.innerHTML += `<div>[${timestamp}] ${message}</div>`;
-    debugContent.scrollTop = debugContent.scrollHeight;
-}
-
 // Inicializar EmailJS - SUBSTITUA PELOS SEUS DADOS
 emailjs.init("ttDB4b7xZiKKwdIXe");
-
 // Seu web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyATgc9OYfLQPS8hg4s_-9gtnSCqe7g5aCk",
@@ -24,20 +9,17 @@ const firebaseConfig = {
     messagingSenderId: "700731489277",
     appId: "1:700731489277:web:e62284e6a67625096ef794"
 };
-
 // Initialize Firebase
 let db, auth;
 try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     auth = firebase.auth();
-    debugLog("Firebase inicializado com sucesso");
-    debugLog("Projeto ID: " + firebaseConfig.projectId);
+    console.log("Firebase inicializado com sucesso");
+    console.log("Projeto ID: " + firebaseConfig.projectId);
 } catch (error) {
-    debugLog("ERRO ao inicializar Firebase: " + error.message);
     console.error("Erro ao inicializar Firebase:", error);
 }
-
 // Global variables
 let currentUser = null;
 let selectedImages = [];
@@ -56,23 +38,21 @@ let userData = {
     phone: '',
     photoURL: ''
 };
-
 // Authentication state observer
 auth.onAuthStateChanged(function(user) {
     if (user) {
         // User is signed in
         currentUser = user;
-        debugLog("Usuário logado: " + user.email + " (UID: " + user.uid + ")");
+        console.log("Usuário logado: " + user.email + " (UID: " + user.uid + ")");
         updateUserInterface(user);
         loadUserData(user.uid);
     } else {
         // User is signed out
         currentUser = null;
-        debugLog("Usuário deslogado");
+        console.log("Usuário deslogado");
         updateUserInterface(null);
     }
 });
-
 // Update UI based on auth state
 function updateUserInterface(user) {
     const userMenu = document.getElementById('userMenu');
@@ -102,7 +82,6 @@ function updateUserInterface(user) {
         loginBtn.style.display = 'inline-block';
     }
 }
-
 // Load user data from Firestore
 async function loadUserData(userId) {
     try {
@@ -119,22 +98,19 @@ async function loadUserData(userId) {
                 document.getElementById('userName').textContent = userData.name;
             }
             
-            debugLog("Dados do usuário carregados: " + JSON.stringify(userData));
+            console.log("Dados do usuário carregados: " + JSON.stringify(userData));
         } else {
-            debugLog("Nenhum dado de usuário encontrado no Firestore");
+            console.log("Nenhum dado de usuário encontrado no Firestore");
         }
     } catch (error) {
-        debugLog("ERRO ao carregar dados do usuário: " + error.message);
         console.error("Erro ao carregar dados do usuário:", error);
     }
 }
-
 // Toggle user dropdown
 function toggleUserDropdown() {
     const dropdown = document.getElementById('userDropdown');
     dropdown.classList.toggle('show');
 }
-
 // Close dropdown when clicking outside
 document.addEventListener('click', function(event) {
     const userMenu = document.getElementById('userMenu');
@@ -144,7 +120,6 @@ document.addEventListener('click', function(event) {
         dropdown.classList.remove('show');
     }
 });
-
 // Show/hide auth form
 function showAuthForm() {
     document.getElementById('authSection').style.display = 'block';
@@ -153,11 +128,9 @@ function showAuthForm() {
     document.getElementById('profileSection').style.display = 'none';
     scrollToElement('authSection');
 }
-
 function hideAuthForm() {
     document.getElementById('authSection').style.display = 'none';
 }
-
 // Switch between login and register tabs
 function switchAuthTab(tab) {
     const tabs = document.querySelectorAll('.auth-tab');
@@ -174,7 +147,6 @@ function switchAuthTab(tab) {
         document.getElementById('registerContent').classList.add('active');
     }
 }
-
 // Login form submission
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -187,7 +159,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     loadingModal.show();
     
     try {
-        debugLog("Tentando fazer login: " + email);
+        console.log("Tentando fazer login: " + email);
         
         // Sign in with Firebase
         await auth.signInWithEmailAndPassword(email, password);
@@ -198,9 +170,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         // Hide auth form
         hideAuthForm();
         
-        debugLog("Login realizado com sucesso");
+        console.log("Login realizado com sucesso");
     } catch (error) {
-        debugLog("ERRO ao fazer login: " + error.message);
         console.error("Erro ao fazer login:", error);
         
         // Hide loading modal
@@ -220,7 +191,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         alert(errorMessage);
     }
 });
-
 // Register form submission
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -246,7 +216,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     loadingModal.show();
     
     try {
-        debugLog("Tentando criar conta: " + email);
+        console.log("Tentando criar conta: " + email);
         
         // Create user with Firebase
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
@@ -275,9 +245,8 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         // Hide auth form
         hideAuthForm();
         
-        debugLog("Conta criada com sucesso");
+        console.log("Conta criada com sucesso");
     } catch (error) {
-        debugLog("ERRO ao criar conta: " + error.message);
         console.error("Erro ao criar conta:", error);
         
         // Hide loading modal
@@ -297,11 +266,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         alert(errorMessage);
     }
 });
-
 // Logout function
 async function logout() {
     try {
-        debugLog("Fazendo logout");
+        console.log("Fazendo logout");
         
         await auth.signOut();
         
@@ -315,14 +283,12 @@ async function logout() {
         // Close dropdown
         document.getElementById('userDropdown').classList.remove('show');
         
-        debugLog("Logout realizado com sucesso");
+        console.log("Logout realizado com sucesso");
     } catch (error) {
-        debugLog("ERRO ao fazer logout: " + error.message);
         console.error("Erro ao fazer logout:", error);
         alert("Erro ao fazer logout. Tente novamente.");
     }
 }
-
 // Password recovery form
 document.getElementById('recoveryForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -334,7 +300,7 @@ document.getElementById('recoveryForm').addEventListener('submit', async functio
     loadingModal.show();
     
     try {
-        debugLog("Enviando email de recuperação para: " + email);
+        console.log("Enviando email de recuperação para: " + email);
         
         // Send password reset email
         await auth.sendPasswordResetEmail(email);
@@ -348,9 +314,8 @@ document.getElementById('recoveryForm').addEventListener('submit', async functio
         // Hide recovery form
         hideRecoveryForm();
         
-        debugLog("Email de recuperação enviado com sucesso");
+        console.log("Email de recuperação enviado com sucesso");
     } catch (error) {
-        debugLog("ERRO ao enviar email de recuperação: " + error.message);
         console.error("Erro ao enviar email de recuperação:", error);
         
         // Hide loading modal
@@ -368,7 +333,6 @@ document.getElementById('recoveryForm').addEventListener('submit', async functio
         alert(errorMessage);
     }
 });
-
 // Show/hide recovery form
 function showRecoveryForm() {
     document.getElementById('recoverySection').style.display = 'block';
@@ -377,11 +341,9 @@ function showRecoveryForm() {
     document.getElementById('profileSection').style.display = 'none';
     scrollToElement('recoverySection');
 }
-
 function hideRecoveryForm() {
     document.getElementById('recoverySection').style.display = 'none';
 }
-
 // Show/hide profile form
 function showProfile() {
     // Check if user is logged in
@@ -425,11 +387,9 @@ function showProfile() {
     // Close dropdown
     document.getElementById('userDropdown').classList.remove('show');
 }
-
 function hideProfile() {
     document.getElementById('profileSection').style.display = 'none';
 }
-
 // Switch between view and edit profile tabs
 function switchProfileTab(tab) {
     const tabs = document.querySelectorAll('.profile-tab');
@@ -446,7 +406,6 @@ function switchProfileTab(tab) {
         document.getElementById('editProfileContent').classList.add('active');
     }
 }
-
 // Edit profile form submission
 document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -477,7 +436,7 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
     loadingModal.show();
     
     try {
-        debugLog("Atualizando perfil do usuário");
+        console.log("Atualizando perfil do usuário");
         
         // Update user profile in Firebase Auth
         const authUpdateData = {
@@ -521,9 +480,8 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
         // Show success message
         alert('Perfil atualizado com sucesso!');
         
-        debugLog("Perfil atualizado com sucesso");
+        console.log("Perfil atualizado com sucesso");
     } catch (error) {
-        debugLog("ERRO ao atualizar perfil: " + error.message);
         console.error("Erro ao atualizar perfil:", error);
         
         // Hide loading modal
@@ -539,11 +497,10 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
         alert(errorMessage);
     }
 });
-
 // Função para atualizar todos os produtos do usuário com os novos dados
 async function updateUserProducts() {
     try {
-        debugLog("Atualizando anúncios do usuário com novos dados");
+        console.log("Atualizando anúncios do usuário com novos dados");
         
         // Buscar todos os produtos do usuário
         const snapshot = await db.collection('products')
@@ -552,7 +509,7 @@ async function updateUserProducts() {
         
         // Se não tiver produtos, não precisa fazer nada
         if (snapshot.empty) {
-            debugLog("Usuário não possui anúncios para atualizar");
+            console.log("Usuário não possui anúncios para atualizar");
             return;
         }
         
@@ -571,17 +528,15 @@ async function updateUserProducts() {
         // Executar o batch update
         await batch.commit();
         
-        debugLog(`Atualizados ${snapshot.size} anúncios com os novos dados do usuário`);
+        console.log(`Atualizados ${snapshot.size} anúncios com os novos dados do usuário`);
         
         // Recarregar os produtos para atualizar a interface
         await loadProducts();
     } catch (error) {
-        debugLog("ERRO ao atualizar anúncios do usuário: " + error.message);
         console.error("Erro ao atualizar anúncios do usuário:", error);
         // Não interrompe o fluxo se falhar a atualização dos produtos
     }
 }
-
 // Show/hide add form
 function showAddForm(productId = null) {
     // Check if user is logged in
@@ -619,7 +574,6 @@ function showAddForm(productId = null) {
     document.getElementById('productName').focus();
     scrollToElement('addProductSection');
 }
-
 // Update user contact display
 function updateUserContactDisplay() {
     const displayName = document.getElementById('displayName');
@@ -643,17 +597,15 @@ function updateUserContactDisplay() {
         sellerContactInput.value = '';
     }
 }
-
 function hideAddForm() {
     document.getElementById('addProductSection').style.display = 'none';
     document.getElementById('productForm').reset();
     resetImageUpload();
 }
-
 // Load product data for editing
 async function loadProductData(productId) {
     try {
-        debugLog("Carregando dados do anúncio: " + productId);
+        console.log("Carregando dados do anúncio: " + productId);
         
         const productDoc = await db.collection('products').doc(productId).get();
         
@@ -685,15 +637,13 @@ async function loadProductData(productId) {
         selectedImages = product.images.map(img => ({ data: img }));
         updateImageGrid();
         
-        debugLog("Dados do anúncio carregados com sucesso");
+        console.log("Dados do anúncio carregados com sucesso");
     } catch (error) {
-        debugLog("ERRO ao carregar dados do anúncio: " + error.message);
         console.error("Erro ao carregar dados do anúncio:", error);
         alert("Erro ao carregar dados do anúncio. Tente novamente.");
         hideAddForm();
     }
 }
-
 // Select product condition
 function selectCondition(condition) {
     // Update hidden input
@@ -709,19 +659,19 @@ function selectCondition(condition) {
         }
     });
 }
-
 // Multiple images handling functions
 function previewMultipleImages(event) {
     const files = Array.from(event.target.files);
     
+    // Limitar a 5 imagens
+    if (selectedImages.length + files.length > 5) {
+        alert('Você pode adicionar no máximo 5 fotos.');
+        return;
+    }
+    
     files.forEach(file => {
         if (file.size > 5 * 1024 * 1024) { // 5MB limit
             alert(`A imagem ${file.name} é muito grande. Por favor, escolha imagens menores que 5MB.`);
-            return;
-        }
-        
-        if (selectedImages.length >= 5) {
-            alert('Você pode adicionar no máximo 5 fotos.');
             return;
         }
         
@@ -735,8 +685,10 @@ function previewMultipleImages(event) {
         };
         reader.readAsDataURL(file);
     });
+    
+    // Limpar o input para permitir selecionar a mesma imagem novamente
+    event.target.value = '';
 }
-
 function updateImageGrid() {
     const grid = document.getElementById('uploadGrid');
     
@@ -769,18 +721,15 @@ function updateImageGrid() {
         addMoreBtn.style.display = 'block';
     }
 }
-
 function removeImage(index) {
     selectedImages.splice(index, 1);
     updateImageGrid();
 }
-
 function resetImageUpload() {
     selectedImages = [];
     updateImageGrid();
     document.getElementById('productImages').value = '';
 }
-
 // Drag and drop functionality
 function setupDragAndDrop() {
     const dropZone = document.getElementById('uploadGrid');
@@ -808,7 +757,6 @@ function setupDragAndDrop() {
         previewMultipleImages({ target: { files: files } });
     });
 }
-
 // Format price function
 function formatPrice(price) {
     // Remove any existing R$ and format
@@ -825,7 +773,6 @@ function formatPrice(price) {
     
     return `${integerPart},${decimalPart}`;
 }
-
 // Change image function
 function changeImage(productId, direction) {
     const container = document.getElementById(`images-${productId}`);
@@ -853,12 +800,11 @@ function changeImage(productId, direction) {
     // Update counter
     counter.textContent = `${newIndex + 1} / ${images.length}`;
 }
-
 // Add/Edit product
 document.getElementById('productForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    debugLog("Iniciando processo de envio de formulário");
+    console.log("Iniciando processo de envio de formulário");
     
     const productId = document.getElementById('productId').value;
     const name = document.getElementById('productName').value.trim();
@@ -868,7 +814,7 @@ document.getElementById('productForm').addEventListener('submit', async function
     const sellerName = document.getElementById('sellerName').value.trim();
     const sellerContact = document.getElementById('sellerContact').value.trim();
     
-    debugLog("Dados do formulário coletados");
+    console.log("Dados do formulário coletados");
     
     if (!name || !price || !description || !sellerName || !sellerContact) {
         alert('Por favor, preencha todos os campos obrigatórios.');
@@ -879,6 +825,12 @@ document.getElementById('productForm').addEventListener('submit', async function
         alert('Por favor, adicione pelo menos uma foto do produto.');
         return;
     }
+    
+    // Mostrar indicador de carregamento
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...';
+    submitBtn.disabled = true;
     
     // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
@@ -895,7 +847,7 @@ document.getElementById('productForm').addEventListener('submit', async function
     loadingModal.show();
     
     try {
-        debugLog("Processando envio do anúncio");
+        console.log("Processando envio do anúncio");
         
         // Create/update product object
         const productData = {
@@ -914,7 +866,7 @@ document.getElementById('productForm').addEventListener('submit', async function
         
         if (productId) {
             // Update existing product
-            debugLog("Atualizando anúncio existente: " + productId);
+            console.log("Atualizando anúncio existente: " + productId);
             
             // Verify ownership before updating
             const productDoc = await db.collection('products').doc(productId).get();
@@ -924,14 +876,14 @@ document.getElementById('productForm').addEventListener('submit', async function
             
             await db.collection('products').doc(productId).update(productData);
             result = { success: true, id: productId };
-            debugLog("Anúncio atualizado com sucesso");
+            console.log("Anúncio atualizado com sucesso");
         } else {
             // Create new product
-            debugLog("Criando novo anúncio");
+            console.log("Criando novo anúncio");
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             const docRef = await db.collection('products').add(productData);
             result = { success: true, id: docRef.id };
-            debugLog("Anúncio criado com ID: " + docRef.id);
+            console.log("Anúncio criado com ID: " + docRef.id);
         }
         
         if (!result.success) {
@@ -940,7 +892,7 @@ document.getElementById('productForm').addEventListener('submit', async function
         
         // Update user data if different from profile
         if (sellerName !== userData.name || sellerContact !== userData.phone) {
-            debugLog("Atualizando dados do usuário no perfil");
+            console.log("Atualizando dados do usuário no perfil");
             await db.collection('users').doc(currentUser.uid).update({
                 name: sellerName,
                 phone: sellerContact
@@ -970,19 +922,21 @@ document.getElementById('productForm').addEventListener('submit', async function
             'Seu anúncio foi publicado com sucesso e já está visível no site!';
         modal.show();
         
-        debugLog("Operação concluída com sucesso");
+        console.log("Operação concluída com sucesso");
     } catch (error) {
-        debugLog("ERRO ao processar envio: " + error.message);
-        console.error("Erro ao processar envio:", error);
+        console.error("ERRO ao processar envio:", error);
         hideLoadingModal();
         alert("Ocorreu um erro ao processar o anúncio. Por favor, tente novamente.");
+    } finally {
+        // Restaurar o botão
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
     }
 });
-
 // Load products from Firestore
 async function loadProducts() {
     try {
-        debugLog("Carregando anúncios do Firebase");
+        console.log("Carregando anúncios do Firebase");
         
         let query = db.collection('products');
         
@@ -1008,17 +962,15 @@ async function loadProducts() {
         
         allProducts = products;
         
-        debugLog("Carregados " + products.length + " anúncios");
+        console.log("Carregados " + products.length + " anúncios");
         applyFilters();
         return products;
     } catch (error) {
-        debugLog("ERRO ao carregar anúncios: " + error.message);
         console.error("Erro ao carregar anúncios:", error);
         displayProducts([]);
         return [];
     }
 }
-
 // Apply all filters to products
 function applyFilters() {
     let filteredProducts = [...allProducts];
@@ -1086,7 +1038,6 @@ function applyFilters() {
     displayProducts(filteredProducts);
     updateActiveFilters();
 }
-
 // Update active filters display
 function updateActiveFilters() {
     const activeFiltersContainer = document.getElementById('activeFilters');
@@ -1151,7 +1102,6 @@ function updateActiveFilters() {
     // Show/hide active filters container
     activeFiltersContainer.style.display = hasActiveFilters ? 'flex' : 'none';
 }
-
 // Remove a specific filter
 function removeFilter(filterType) {
     switch (filterType) {
@@ -1181,7 +1131,6 @@ function removeFilter(filterType) {
     
     applyFilters();
 }
-
 // Clear all filters
 function clearAllFilters() {
     currentFilters = {
@@ -1208,7 +1157,6 @@ function clearAllFilters() {
     
     applyFilters();
 }
-
 // Search products
 function searchProducts(event) {
     if (event.key === 'Enter' || event.type === 'click') {
@@ -1216,7 +1164,6 @@ function searchProducts(event) {
         applyFilters();
     }
 }
-
 // Filter by price range
 function filterByPrice() {
     const priceMinValue = document.getElementById('priceMin').value;
@@ -1244,7 +1191,6 @@ function filterByPrice() {
     
     applyFilters();
 }
-
 // Filter products
 function filterProducts(value, type) {
     // Update filter state
@@ -1264,7 +1210,6 @@ function filterProducts(value, type) {
     // Apply filters
     applyFilters();
 }
-
 // Show user's ads
 function showMyAds() {
     // Set filter to show only user's ads
@@ -1276,20 +1221,18 @@ function showMyAds() {
     // Close dropdown
     document.getElementById('userDropdown').classList.remove('show');
 }
-
 // Request delete with confirmation
 function requestDelete(productId) {
     currentProductId = productId;
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     deleteModal.show();
 }
-
 // Confirm delete
 async function confirmDelete() {
     if (!currentProductId) return;
     
     try {
-        debugLog("Excluindo anúncio: " + currentProductId);
+        console.log("Excluindo anúncio: " + currentProductId);
         
         // Verify ownership before deleting
         const productDoc = await db.collection('products').doc(currentProductId).get();
@@ -1299,7 +1242,7 @@ async function confirmDelete() {
         
         await db.collection('products').doc(currentProductId).delete();
         
-        debugLog("Anúncio excluído com sucesso");
+        console.log("Anúncio excluído com sucesso");
         
         // Close modal
         const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
@@ -1311,24 +1254,20 @@ async function confirmDelete() {
         // Show success message
         alert('Anúncio excluído com sucesso!');
     } catch (error) {
-        debugLog("ERRO ao excluir anúncio: " + error.message);
         console.error("Erro ao excluir anúncio:", error);
         alert("Ocorreu um erro ao excluir o anúncio. Por favor, tente novamente.");
     }
 }
-
 // Contact seller
 function contactProduct(productName, sellerContact) {
     const message = `Olá! Vi seu anúncio do(a) ${productName} no DesapegoCTA e tenho interesse. Podemos conversar?`;
     const whatsappUrl = `https://wa.me/55${sellerContact.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
-
 // Display products in the UI
 function displayProducts(products) {
     const container = document.getElementById('productsContainer');
     container.innerHTML = '';
-
     if (products.length === 0) {
         container.innerHTML = `
             <div class="col-12 text-center">
@@ -1342,7 +1281,6 @@ function displayProducts(products) {
         `;
         return;
     }
-
     products.forEach(product => {
         // Check if the current user is the owner of this product
         const isOwner = currentUser && product.userId === currentUser.uid;
@@ -1417,7 +1355,6 @@ function displayProducts(products) {
         container.innerHTML += productCard;
     });
 }
-
 // Toggle filters visibility
 function toggleFilters() {
     const filterToggle = document.getElementById('filterToggle');
@@ -1426,19 +1363,16 @@ function toggleFilters() {
     filterToggle.classList.toggle('active');
     filterContent.classList.toggle('show');
 }
-
 // Utility functions
 function scrollToProducts() {
     scrollToElement('produtos');
 }
-
 function scrollToElement(elementId) {
     document.getElementById(elementId).scrollIntoView({ 
         behavior: 'smooth',
         block: 'start'
     });
 }
-
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -1452,7 +1386,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
-
 // Add scroll effect to navbar
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
@@ -1462,10 +1395,36 @@ window.addEventListener('scroll', function() {
         navbar.style.padding = '1rem 0';
     }
 });
-
 // Load products on page load
 document.addEventListener('DOMContentLoaded', function() {
-    debugLog("Página carregada");
+    console.log("Página carregada");
     loadProducts();
     setupDragAndDrop();
+    
+    // Ajustar formulários para dispositivos móveis
+    if (window.innerWidth <= 768) {
+        // Aumentar tamanho dos alvos de toque
+        const touchTargets = document.querySelectorAll('.btn, .filter-option, .nav-link, .upload-item');
+        touchTargets.forEach(target => {
+            target.style.minHeight = '44px';
+            target.style.minWidth = '44px';
+        });
+        
+        // Melhorar experiência de upload em dispositivos móveis
+        const imageInput = document.getElementById('productImages');
+        if (imageInput) {
+            imageInput.setAttribute('capture', 'environment');
+        }
+    }
+    
+    // Prevenir comportamento padrão em formulários móveis
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Garantir que o teclado seja fechado antes do envio
+            if (window.innerWidth <= 768) {
+                document.activeElement.blur();
+            }
+        });
+    });
 });
