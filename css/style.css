@@ -14,6 +14,14 @@
     --shadow-medium: 0 5px 20px rgba(0,0,0,0.12);
     --shadow-heavy: 0 10px 30px rgba(0,0,0,0.15);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Novas variáveis para as tags de condição */
+    --condition-novo-bg: linear-gradient(135deg, #ffcc99, #ffb366);
+    --condition-novo-text: #e55100;
+    --condition-seminovo-bg: linear-gradient(135deg, #ffb366, #ff9933);
+    --condition-seminovo-text: #e55100;
+    --condition-usado-bg: linear-gradient(135deg, #ff9933, #ff8000);
+    --condition-usado-text: #ffffff;
 }
 * {
     margin: 0;
@@ -393,6 +401,33 @@ body {
     box-shadow: 
         0 8px 20px rgba(255, 102, 0, 0.35),
         inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+/* Tags de condição do produto - ALTERADO */
+.product-condition {
+    display: inline-block;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.condition-novo {
+    background: var(--condition-novo-bg);
+    color: var(--condition-novo-text);
+    text-shadow: 0 1px 1px rgba(229, 81, 0, 0.15);
+}
+.condition-seminovo {
+    background: var(--condition-seminovo-bg);
+    color: var(--condition-seminovo-text);
+    text-shadow: 0 1px 1px rgba(229, 81, 0, 0.15);
+}
+.condition-usado {
+    background: var(--condition-usado-bg);
+    color: var(--condition-usado-text);
+    text-shadow: 0 1px 1px rgba(255, 102, 0, 0.15);
 }
 /* About Section - Melhorada */
 .about {
@@ -1330,32 +1365,6 @@ footer::before {
         0 4px 15px rgba(255, 102, 0, 0.35),
         inset 0 1px 1px rgba(255, 255, 255, 0.25);
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
-}
-.product-condition {
-    display: inline-block;
-    padding: 8px 18px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.condition-novo {
-    background: linear-gradient(135deg, #d4edda, #c3e6cb);
-    color: #155724;
-    text-shadow: 0 1px 1px rgba(21, 87, 36, 0.15);
-}
-.condition-seminovo {
-    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-    color: #856404;
-    text-shadow: 0 1px 1px rgba(133, 100, 4, 0.15);
-}
-.condition-usado {
-    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-    color: #721c24;
-    text-shadow: 0 1px 1px rgba(114, 28, 36, 0.15);
 }
 /* Search Bar Styles */
 .search-container {
