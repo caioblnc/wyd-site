@@ -1,6 +1,4 @@
-// Inicializar EmailJS - SUBSTITUA PELOS SEUS DADOS
 emailjs.init("ttDB4b7xZiKKwdIXe");
-// Seu web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyATgc9OYfLQPS8hg4s_-9gtnSCqe7g5aCk",
     authDomain: "site-moveis-dcta.firebaseapp.com",
@@ -9,7 +7,6 @@ const firebaseConfig = {
     messagingSenderId: "700731489277",
     appId: "1:700731489277:web:e62284e6a67625096ef794"
 };
-// Initialize Firebase
 let db, auth;
 try {
     firebase.initializeApp(firebaseConfig);
@@ -20,7 +17,6 @@ try {
 } catch (error) {
     console.error("Erro ao inicializar Firebase:", error);
 }
-// Global variables
 let currentUser = null;
 let selectedImages = [];
 let currentProductId = null;
@@ -38,22 +34,18 @@ let userData = {
     phone: '',
     photoURL: ''
 };
-// Authentication state observer
 auth.onAuthStateChanged(function(user) {
     if (user) {
-        // User is signed in
         currentUser = user;
         console.log("Usuário logado: " + user.email + " (UID: " + user.uid + ")");
         updateUserInterface(user);
         loadUserData(user.uid);
     } else {
-        // User is signed out
         currentUser = null;
         console.log("Usuário deslogado");
         updateUserInterface(null);
     }
 });
-// Update UI based on auth state
 function updateUserInterface(user) {
     const userMenu = document.getElementById('userMenu');
     const loginLink = document.getElementById('loginLink');
@@ -61,28 +53,23 @@ function updateUserInterface(user) {
     const loginBtn = document.getElementById('loginBtn');
     
     if (user) {
-        // Show user menu, hide login link
         userMenu.style.display = 'block';
         loginLink.style.display = 'none';
         newAdBtn.style.display = 'inline-block';
         loginBtn.style.display = 'none';
         
-        // Update user info
         const userName = user.displayName || user.email.split('@')[0];
         document.getElementById('userName').textContent = userName;
         
-        // Update avatar - usando apenas a inicial do nome
         const userAvatarText = document.getElementById('userAvatarText');
         userAvatarText.textContent = userName.charAt(0).toUpperCase();
     } else {
-        // Show login link, hide user menu
         userMenu.style.display = 'none';
         loginLink.style.display = 'block';
         newAdBtn.style.display = 'none';
         loginBtn.style.display = 'inline-block';
     }
 }
-// Load user data from Firestore
 async function loadUserData(userId) {
     try {
         const userDoc = await db.collection('users').doc(userId).get();
@@ -93,7 +80,6 @@ async function loadUserData(userId) {
             userData.phone = data.phone || '';
             userData.photoURL = data.photoURL || '';
             
-            // Update UI with user data
             if (userData.name) {
                 document.getElementById('userName').textContent = userData.name;
             }
@@ -106,12 +92,10 @@ async function loadUserData(userId) {
         console.error("Erro ao carregar dados do usuário:", error);
     }
 }
-// Toggle user dropdown
 function toggleUserDropdown() {
     const dropdown = document.getElementById('userDropdown');
     dropdown.classList.toggle('show');
 }
-// Close dropdown when clicking outside
 document.addEventListener('click', function(event) {
     const userMenu = document.getElementById('userMenu');
     const dropdown = document.getElementById('userDropdown');
@@ -120,7 +104,6 @@ document.addEventListener('click', function(event) {
         dropdown.classList.remove('show');
     }
 });
-// Show/hide auth form
 function showAuthForm() {
     document.getElementById('authSection').style.display = 'block';
     document.getElementById('addProductSection').style.display = 'none';
@@ -131,7 +114,6 @@ function showAuthForm() {
 function hideAuthForm() {
     document.getElementById('authSection').style.display = 'none';
 }
-// Switch between login and register tabs
 function switchAuthTab(tab) {
     const tabs = document.querySelectorAll('.auth-tab');
     const contents = document.querySelectorAll('.auth-content');
@@ -147,37 +129,30 @@ function switchAuthTab(tab) {
         document.getElementById('registerContent').classList.add('active');
     }
 }
-// Login form submission
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     
-    // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();
     
     try {
         console.log("Tentando fazer login: " + email);
         
-        // Sign in with Firebase
         await auth.signInWithEmailAndPassword(email, password);
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Hide auth form
         hideAuthForm();
         
         console.log("Login realizado com sucesso");
     } catch (error) {
         console.error("Erro ao fazer login:", error);
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Show error message
         let errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
         
         if (error.code === 'auth/user-not-found') {
@@ -191,7 +166,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         alert(errorMessage);
     }
 });
-// Register form submission
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -211,23 +185,19 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
     
-    // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();
     
     try {
         console.log("Tentando criar conta: " + email);
         
-        // Create user with Firebase
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // Update user profile
         await user.updateProfile({
             displayName: name
         });
         
-        // Save additional user data to Firestore
         await db.collection('users').doc(user.uid).set({
             name,
             email,
@@ -235,24 +205,19 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        // Update global user data
         userData.name = name;
         userData.phone = phone;
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Hide auth form
         hideAuthForm();
         
         console.log("Conta criada com sucesso");
     } catch (error) {
         console.error("Erro ao criar conta:", error);
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Show error message
         let errorMessage = "Erro ao criar conta. Tente novamente.";
         
         if (error.code === 'auth/email-already-in-use') {
@@ -266,21 +231,18 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         alert(errorMessage);
     }
 });
-// Logout function
 async function logout() {
     try {
         console.log("Fazendo logout");
         
         await auth.signOut();
         
-        // Reset user data
         userData = {
             name: '',
             phone: '',
             photoURL: ''
         };
         
-        // Close dropdown
         document.getElementById('userDropdown').classList.remove('show');
         
         console.log("Logout realizado com sucesso");
@@ -289,39 +251,31 @@ async function logout() {
         alert("Erro ao fazer logout. Tente novamente.");
     }
 }
-// Password recovery form
 document.getElementById('recoveryForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const email = document.getElementById('recoveryEmailInput').value;
     
-    // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();
     
     try {
         console.log("Enviando email de recuperação para: " + email);
         
-        // Send password reset email
         await auth.sendPasswordResetEmail(email);
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Show success message
         alert("Email de recuperação enviado! Verifique sua caixa de entrada.");
         
-        // Hide recovery form
         hideRecoveryForm();
         
         console.log("Email de recuperação enviado com sucesso");
     } catch (error) {
         console.error("Erro ao enviar email de recuperação:", error);
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Show error message
         let errorMessage = "Erro ao enviar email de recuperação. Tente novamente.";
         
         if (error.code === 'auth/user-not-found') {
@@ -333,7 +287,6 @@ document.getElementById('recoveryForm').addEventListener('submit', async functio
         alert(errorMessage);
     }
 });
-// Show/hide recovery form
 function showRecoveryForm() {
     document.getElementById('recoverySection').style.display = 'block';
     document.getElementById('authSection').style.display = 'none';
@@ -344,19 +297,15 @@ function showRecoveryForm() {
 function hideRecoveryForm() {
     document.getElementById('recoverySection').style.display = 'none';
 }
-// Show/hide profile form
 function showProfile() {
-    // Check if user is logged in
     if (!currentUser) {
         showAuthForm();
         return;
     }
     
-    // Load user data into form
     document.getElementById('profileNameDisplay').textContent = userData.name || 'Nome não informado';
     document.getElementById('profileEmailDisplay').textContent = currentUser.email || 'Email não informado';
     
-    // Update profile avatar - usando apenas a inicial do nome
     const profileAvatarText = document.getElementById('profileAvatarText');
     const profileAvatarImg = document.getElementById('profileAvatarImg');
     
@@ -365,32 +314,27 @@ function showProfile() {
     profileAvatarText.style.display = 'block';
     profileAvatarImg.style.display = 'none';
     
-    // Update view profile content
     document.getElementById('viewName').textContent = userData.name || 'Não informado';
     document.getElementById('viewEmail').textContent = currentUser.email || 'Não informado';
     document.getElementById('viewPhone').textContent = userData.phone || 'Não informado';
     
-    // Update edit profile form
     document.getElementById('editName').value = userData.name || '';
     document.getElementById('editEmail').value = currentUser.email || '';
     document.getElementById('editPhone').value = userData.phone || '';
     document.getElementById('editPassword').value = '';
     document.getElementById('editConfirmPassword').value = '';
     
-    // Show profile section and hide others
     document.getElementById('profileSection').style.display = 'block';
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('addProductSection').style.display = 'none';
     document.getElementById('recoverySection').style.display = 'none';
     scrollToElement('profileSection');
     
-    // Close dropdown
     document.getElementById('userDropdown').classList.remove('show');
 }
 function hideProfile() {
     document.getElementById('profileSection').style.display = 'none';
 }
-// Switch between view and edit profile tabs
 function switchProfileTab(tab) {
     const tabs = document.querySelectorAll('.profile-tab');
     const contents = document.querySelectorAll('.profile-content');
@@ -406,7 +350,6 @@ function switchProfileTab(tab) {
         document.getElementById('editProfileContent').classList.add('active');
     }
 }
-// Edit profile form submission
 document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -431,26 +374,22 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
         return;
     }
     
-    // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();
     
     try {
         console.log("Atualizando perfil do usuário");
         
-        // Update user profile in Firebase Auth
         const authUpdateData = {
             displayName: name
         };
         
         await currentUser.updateProfile(authUpdateData);
         
-        // Update password if provided
         if (password) {
             await currentUser.updatePassword(password);
         }
         
-        // Update user data in Firestore
         const updateData = {
             name,
             phone
@@ -458,36 +397,28 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
         
         await db.collection('users').doc(currentUser.uid).update(updateData);
         
-        // Update global user data
         userData.name = name;
         userData.phone = phone;
         
-        // Atualizar todos os anúncios do usuário com os novos dados
         await updateUserProducts();
         
-        // Update UI
         document.getElementById('userName').textContent = name;
         document.getElementById('profileNameDisplay').textContent = name;
         document.getElementById('viewName').textContent = name;
         document.getElementById('viewPhone').textContent = phone;
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Switch to view tab
         switchProfileTab('view');
         
-        // Show success message
         alert('Perfil atualizado com sucesso!');
         
         console.log("Perfil atualizado com sucesso");
     } catch (error) {
         console.error("Erro ao atualizar perfil:", error);
         
-        // Hide loading modal
         loadingModal.hide();
         
-        // Show error message
         let errorMessage = "Erro ao atualizar perfil. Tente novamente.";
         
         if (error.code === 'auth/requires-recent-login') {
@@ -497,26 +428,21 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
         alert(errorMessage);
     }
 });
-// Função para atualizar todos os produtos do usuário com os novos dados
 async function updateUserProducts() {
     try {
         console.log("Atualizando anúncios do usuário com novos dados");
         
-        // Buscar todos os produtos do usuário
         const snapshot = await db.collection('products')
             .where('userId', '==', currentUser.uid)
             .get();
         
-        // Se não tiver produtos, não precisa fazer nada
         if (snapshot.empty) {
             console.log("Usuário não possui anúncios para atualizar");
             return;
         }
         
-        // Preparar o batch update
         const batch = db.batch();
         
-        // Atualizar cada produto com os novos dados do usuário
         snapshot.forEach(doc => {
             const productRef = db.collection('products').doc(doc.id);
             batch.update(productRef, {
@@ -525,46 +451,35 @@ async function updateUserProducts() {
             });
         });
         
-        // Executar o batch update
         await batch.commit();
         
         console.log(`Atualizados ${snapshot.size} anúncios com os novos dados do usuário`);
         
-        // Recarregar os produtos para atualizar a interface
         await loadProducts();
     } catch (error) {
         console.error("Erro ao atualizar anúncios do usuário:", error);
-        // Não interrompe o fluxo se falhar a atualização dos produtos
     }
 }
-// Show/hide add form
 function showAddForm(productId = null) {
-    // Check if user is logged in
     if (!currentUser) {
         showAuthForm();
         return;
     }
     
-    // Reset form
     document.getElementById('productForm').reset();
     resetImageUpload();
     
-    // Set form mode (add or edit)
     if (productId) {
-        // Edit mode
         document.getElementById('formTitle').textContent = 'Editar Anúncio';
         document.getElementById('submitBtn').innerHTML = '<i class="bi bi-pencil-square"></i> Salvar Alterações';
         
-        // Load product data
         loadProductData(productId);
     } else {
-        // Add mode
         document.getElementById('formTitle').textContent = 'Anunciar seu Produto';
         document.getElementById('submitBtn').innerHTML = '<i class="bi bi-plus-circle"></i> Publicar Anúncio';
         document.getElementById('productId').value = '';
     }
     
-    // Update user info display
     updateUserContactDisplay();
     
     document.getElementById('addProductSection').style.display = 'block';
@@ -574,7 +489,6 @@ function showAddForm(productId = null) {
     document.getElementById('productName').focus();
     scrollToElement('addProductSection');
 }
-// Update user contact display
 function updateUserContactDisplay() {
     const displayName = document.getElementById('displayName');
     const displayPhone = document.getElementById('displayPhone');
@@ -602,7 +516,6 @@ function hideAddForm() {
     document.getElementById('productForm').reset();
     resetImageUpload();
 }
-// Load product data for editing
 async function loadProductData(productId) {
     try {
         console.log("Carregando dados do anúncio: " + productId);
@@ -617,23 +530,19 @@ async function loadProductData(productId) {
         
         const product = productDoc.data();
         
-        // Check if the product belongs to the current user
         if (product.userId !== currentUser.uid) {
             alert("Você não tem permissão para editar este anúncio.");
             hideAddForm();
             return;
         }
         
-        // Fill form with product data
         document.getElementById('productId').value = productId;
         document.getElementById('productName').value = product.name;
         document.getElementById('productPrice').value = product.price;
         document.getElementById('productDescription').value = product.description;
         
-        // Set condition
         selectCondition(product.condition);
         
-        // Load images
         selectedImages = product.images.map(img => ({ data: img }));
         updateImageGrid();
         
@@ -644,12 +553,9 @@ async function loadProductData(productId) {
         hideAddForm();
     }
 }
-// Select product condition
 function selectCondition(condition) {
-    // Update hidden input
     document.getElementById('productCondition').value = condition;
     
-    // Update UI
     const options = document.querySelectorAll('#addProductSection .filter-option');
     options.forEach(option => {
         if (option.dataset.condition === condition) {
@@ -659,18 +565,16 @@ function selectCondition(condition) {
         }
     });
 }
-// Multiple images handling functions
 function previewMultipleImages(event) {
     const files = Array.from(event.target.files);
     
-    // Limitar a 5 imagens
     if (selectedImages.length + files.length > 5) {
         alert('Você pode adicionar no máximo 5 fotos.');
         return;
     }
     
     files.forEach(file => {
-        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        if (file.size > 5 * 1024 * 1024) {
             alert(`A imagem ${file.name} é muito grande. Por favor, escolha imagens menores que 5MB.`);
             return;
         }
@@ -686,13 +590,11 @@ function previewMultipleImages(event) {
         reader.readAsDataURL(file);
     });
     
-    // Limpar o input para permitir selecionar a mesma imagem novamente
     event.target.value = '';
 }
 function updateImageGrid() {
     const grid = document.getElementById('uploadGrid');
     
-    // Clear existing items except the add-more button
     const items = grid.querySelectorAll('.upload-item');
     items.forEach(item => {
         if (!item.classList.contains('add-more')) {
@@ -700,7 +602,6 @@ function updateImageGrid() {
         }
     });
     
-    // Add image previews
     selectedImages.forEach((image, index) => {
         const item = document.createElement('div');
         item.className = 'upload-item';
@@ -713,7 +614,6 @@ function updateImageGrid() {
         grid.insertBefore(item, grid.lastElementChild);
     });
     
-    // Show/hide add-more button
     const addMoreBtn = grid.querySelector('.add-more');
     if (selectedImages.length >= 5) {
         addMoreBtn.style.display = 'none';
@@ -730,7 +630,6 @@ function resetImageUpload() {
     updateImageGrid();
     document.getElementById('productImages').value = '';
 }
-// Drag and drop functionality
 function setupDragAndDrop() {
     const dropZone = document.getElementById('uploadGrid');
     
@@ -757,23 +656,18 @@ function setupDragAndDrop() {
         previewMultipleImages({ target: { files: files } });
     });
 }
-// Format price function
 function formatPrice(price) {
-    // Remove any existing R$ and format
     const numericPrice = price.replace(/[^\d,]/g, '');
     const parts = numericPrice.split(',');
     let integerPart = parts[0] || '0';
     let decimalPart = parts[1] || '00';
     
-    // Add thousands separator
     integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     
-    // Ensure decimal part has 2 digits
     decimalPart = decimalPart.padEnd(2, '0').slice(0, 2);
     
     return `${integerPart},${decimalPart}`;
 }
-// Change image function
 function changeImage(productId, direction) {
     const container = document.getElementById(`images-${productId}`);
     const images = container.querySelectorAll('img');
@@ -786,21 +680,16 @@ function changeImage(productId, direction) {
         }
     });
     
-    // Remove active class from current image
     images[currentIndex].classList.remove('active');
     
-    // Calculate new index
     let newIndex = currentIndex + direction;
     if (newIndex < 0) newIndex = images.length - 1;
     if (newIndex >= images.length) newIndex = 0;
     
-    // Add active class to new image
     images[newIndex].classList.add('active');
     
-    // Update counter
     counter.textContent = `${newIndex + 1} / ${images.length}`;
 }
-// Add/Edit product
 document.getElementById('productForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -826,17 +715,14 @@ document.getElementById('productForm').addEventListener('submit', async function
         return;
     }
     
-    // Mostrar indicador de carregamento
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...';
     submitBtn.disabled = true;
     
-    // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     let modalHidden = false;
     
-    // Function to hide modal safely
     const hideLoadingModal = () => {
         if (!modalHidden) {
             loadingModal.hide();
@@ -849,7 +735,6 @@ document.getElementById('productForm').addEventListener('submit', async function
     try {
         console.log("Processando envio do anúncio");
         
-        // Create/update product object
         const productData = {
             name,
             price,
@@ -858,17 +743,15 @@ document.getElementById('productForm').addEventListener('submit', async function
             images: selectedImages.map(img => img.data),
             sellerName,
             sellerContact,
-            userId: currentUser.uid, // Usando UID do Firebase Authentication
+            userId: currentUser.uid,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
         let result;
         
         if (productId) {
-            // Update existing product
             console.log("Atualizando anúncio existente: " + productId);
             
-            // Verify ownership before updating
             const productDoc = await db.collection('products').doc(productId).get();
             if (!productDoc.exists || productDoc.data().userId !== currentUser.uid) {
                 throw new Error("Você não tem permissão para editar este anúncio.");
@@ -878,7 +761,6 @@ document.getElementById('productForm').addEventListener('submit', async function
             result = { success: true, id: productId };
             console.log("Anúncio atualizado com sucesso");
         } else {
-            // Create new product
             console.log("Criando novo anúncio");
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             const docRef = await db.collection('products').add(productData);
@@ -890,7 +772,6 @@ document.getElementById('productForm').addEventListener('submit', async function
             throw new Error(result.error);
         }
         
-        // Update user data if different from profile
         if (sellerName !== userData.name || sellerContact !== userData.phone) {
             console.log("Atualizando dados do usuário no perfil");
             await db.collection('users').doc(currentUser.uid).update({
@@ -898,23 +779,18 @@ document.getElementById('productForm').addEventListener('submit', async function
                 phone: sellerContact
             });
             
-            // Update global user data
             userData.name = sellerName;
             userData.phone = sellerContact;
         }
         
-        // Reset form and hide
         this.reset();
         resetImageUpload();
         hideAddForm();
         
-        // Hide loading modal
         hideLoadingModal();
         
-        // Reload products
         await loadProducts();
         
-        // Show success modal
         const modal = new bootstrap.Modal(document.getElementById('successModal'));
         document.getElementById('successModalTitle').textContent = productId ? 'Anúncio Atualizado!' : 'Anúncio Publicado!';
         document.getElementById('successModalMessage').textContent = productId ? 
@@ -928,19 +804,16 @@ document.getElementById('productForm').addEventListener('submit', async function
         hideLoadingModal();
         alert("Ocorreu um erro ao processar o anúncio. Por favor, tente novamente.");
     } finally {
-        // Restaurar o botão
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     }
 });
-// Load products from Firestore
 async function loadProducts() {
     try {
         console.log("Carregando anúncios do Firebase");
         
         let query = db.collection('products');
         
-        // Apply sorting
         if (currentFilters.sort === 'recent') {
             query = query.orderBy('createdAt', 'desc');
         } else if (currentFilters.sort === 'price-low') {
@@ -971,18 +844,15 @@ async function loadProducts() {
         return [];
     }
 }
-// Apply all filters to products
 function applyFilters() {
     let filteredProducts = [...allProducts];
     
-    // Apply user filter
     if (currentFilters.user === 'mine' && currentUser) {
         filteredProducts = filteredProducts.filter(product => 
             product.userId === currentUser.uid
         );
     }
     
-    // Apply search filter
     if (currentFilters.search) {
         const searchTerm = currentFilters.search.toLowerCase();
         filteredProducts = filteredProducts.filter(product => 
@@ -992,14 +862,12 @@ function applyFilters() {
         );
     }
     
-    // Apply condition filter
     if (currentFilters.condition !== 'all') {
         filteredProducts = filteredProducts.filter(product => 
             product.condition === currentFilters.condition
         );
     }
     
-    // Apply price range filter
     if (currentFilters.priceMin !== null) {
         filteredProducts = filteredProducts.filter(product => {
             const productPrice = parseInt(product.price.replace(/[^\d]/g, ''));
@@ -1014,7 +882,6 @@ function applyFilters() {
         });
     }
     
-    // Apply sorting
     if (currentFilters.sort === 'recent') {
         filteredProducts.sort((a, b) => {
             const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
@@ -1038,14 +905,12 @@ function applyFilters() {
     displayProducts(filteredProducts);
     updateActiveFilters();
 }
-// Update active filters display
 function updateActiveFilters() {
     const activeFiltersContainer = document.getElementById('activeFilters');
     activeFiltersContainer.innerHTML = '<span class="me-2">Filtros ativos:</span>';
     
     let hasActiveFilters = false;
     
-    // Add search filter
     if (currentFilters.search) {
         activeFiltersContainer.innerHTML += `
             <span class="active-filter-tag">
@@ -1056,7 +921,6 @@ function updateActiveFilters() {
         hasActiveFilters = true;
     }
     
-    // Add condition filter
     if (currentFilters.condition !== 'all') {
         const conditionText = currentFilters.condition.charAt(0).toUpperCase() + currentFilters.condition.slice(1);
         activeFiltersContainer.innerHTML += `
@@ -1068,7 +932,6 @@ function updateActiveFilters() {
         hasActiveFilters = true;
     }
     
-    // Add price range filter
     if (currentFilters.priceMin !== null || currentFilters.priceMax !== null) {
         let priceText = 'Preço: ';
         if (currentFilters.priceMin !== null && currentFilters.priceMax !== null) {
@@ -1088,7 +951,6 @@ function updateActiveFilters() {
         hasActiveFilters = true;
     }
     
-    // Add user filter
     if (currentFilters.user !== 'all') {
         activeFiltersContainer.innerHTML += `
             <span class="active-filter-tag">
@@ -1099,10 +961,8 @@ function updateActiveFilters() {
         hasActiveFilters = true;
     }
     
-    // Show/hide active filters container
     activeFiltersContainer.style.display = hasActiveFilters ? 'flex' : 'none';
 }
-// Remove a specific filter
 function removeFilter(filterType) {
     switch (filterType) {
         case 'search':
@@ -1131,7 +991,6 @@ function removeFilter(filterType) {
     
     applyFilters();
 }
-// Clear all filters
 function clearAllFilters() {
     currentFilters = {
         search: '',
@@ -1142,12 +1001,10 @@ function clearAllFilters() {
         user: 'all'
     };
     
-    // Reset UI elements
     document.getElementById('searchInput').value = '';
     document.getElementById('priceMin').value = '';
     document.getElementById('priceMax').value = '';
     
-    // Reset filter options
     document.querySelectorAll('.filter-option').forEach(option => {
         option.classList.remove('active');
         if (option.dataset.filter === 'all') {
@@ -1157,19 +1014,16 @@ function clearAllFilters() {
     
     applyFilters();
 }
-// Search products
 function searchProducts(event) {
     if (event.key === 'Enter' || event.type === 'click') {
         currentFilters.search = document.getElementById('searchInput').value.trim();
         applyFilters();
     }
 }
-// Filter by price range
 function filterByPrice() {
     const priceMinValue = document.getElementById('priceMin').value;
     const priceMaxValue = document.getElementById('priceMax').value;
     
-    // Parse min price
     if (priceMinValue !== '') {
         const minPrice = parseInt(priceMinValue);
         if (!isNaN(minPrice)) {
@@ -1179,7 +1033,6 @@ function filterByPrice() {
         currentFilters.priceMin = null;
     }
     
-    // Parse max price
     if (priceMaxValue !== '') {
         const maxPrice = parseInt(priceMaxValue);
         if (!isNaN(maxPrice)) {
@@ -1191,50 +1044,37 @@ function filterByPrice() {
     
     applyFilters();
 }
-// Filter products
 function filterProducts(value, type) {
-    // Update filter state
     currentFilters[type] = value;
     
-    // Update UI
     const options = document.querySelectorAll(`.filter-option[data-filter="${value}"]`);
     options.forEach(option => {
-        // Remove active class from siblings
         const siblings = Array.from(option.parentNode.children);
         siblings.forEach(sibling => sibling.classList.remove('active'));
         
-        // Add active class to selected option
         option.classList.add('active');
     });
     
-    // Apply filters
     applyFilters();
 }
-// Show user's ads
 function showMyAds() {
-    // Set filter to show only user's ads
     filterProducts('mine', 'user');
     
-    // Scroll to products section
     scrollToElement('produtos');
     
-    // Close dropdown
     document.getElementById('userDropdown').classList.remove('show');
 }
-// Request delete with confirmation
 function requestDelete(productId) {
     currentProductId = productId;
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     deleteModal.show();
 }
-// Confirm delete
 async function confirmDelete() {
     if (!currentProductId) return;
     
     try {
         console.log("Excluindo anúncio: " + currentProductId);
         
-        // Verify ownership before deleting
         const productDoc = await db.collection('products').doc(currentProductId).get();
         if (!productDoc.exists || productDoc.data().userId !== currentUser.uid) {
             throw new Error("Você não tem permissão para excluir este anúncio.");
@@ -1244,27 +1084,22 @@ async function confirmDelete() {
         
         console.log("Anúncio excluído com sucesso");
         
-        // Close modal
         const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
         deleteModal.hide();
         
-        // Reload products
         await loadProducts();
         
-        // Show success message
         alert('Anúncio excluído com sucesso!');
     } catch (error) {
         console.error("Erro ao excluir anúncio:", error);
         alert("Ocorreu um erro ao excluir o anúncio. Por favor, tente novamente.");
     }
 }
-// Contact seller
 function contactProduct(productName, sellerContact) {
     const message = `Olá! Vi seu anúncio do(a) ${productName} no DesapegoCTA e tenho interesse. Podemos conversar?`;
     const whatsappUrl = `https://wa.me/55${sellerContact.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
-// Display products in the UI
 function displayProducts(products) {
     const container = document.getElementById('productsContainer');
     container.innerHTML = '';
@@ -1282,7 +1117,6 @@ function displayProducts(products) {
         return;
     }
     products.forEach(product => {
-        // Check if the current user is the owner of this product
         const isOwner = currentUser && product.userId === currentUser.uid;
         const conditionClass = `condition-${product.condition}`;
         const conditionText = product.condition.charAt(0).toUpperCase() + product.condition.slice(1);
@@ -1333,7 +1167,6 @@ function displayProducts(products) {
                         <div class="product-price">R$ ${formatPrice(product.price)}</div>
                         <p class="product-description">${product.description}</p>
                         
-                        <!-- Seller Info Card -->
                         <div class="seller-info-card">
                             <div class="seller-details">
                                 <div class="seller-name">
@@ -1355,7 +1188,6 @@ function displayProducts(products) {
         container.innerHTML += productCard;
     });
 }
-// Toggle filters visibility
 function toggleFilters() {
     const filterToggle = document.getElementById('filterToggle');
     const filterContent = document.getElementById('filterContent');
@@ -1363,7 +1195,6 @@ function toggleFilters() {
     filterToggle.classList.toggle('active');
     filterContent.classList.toggle('show');
 }
-// Utility functions
 function scrollToProducts() {
     scrollToElement('produtos');
 }
@@ -1373,7 +1204,6 @@ function scrollToElement(elementId) {
         block: 'start'
     });
 }
-// Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -1386,7 +1216,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
-// Add scroll effect to navbar
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
@@ -1395,33 +1224,27 @@ window.addEventListener('scroll', function() {
         navbar.style.padding = '1rem 0';
     }
 });
-// Load products on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Página carregada");
     loadProducts();
     setupDragAndDrop();
     
-    // Ajustar formulários para dispositivos móveis
     if (window.innerWidth <= 768) {
-        // Aumentar tamanho dos alvos de toque
         const touchTargets = document.querySelectorAll('.btn, .filter-option, .nav-link, .upload-item');
         touchTargets.forEach(target => {
             target.style.minHeight = '44px';
             target.style.minWidth = '44px';
         });
         
-        // Melhorar experiência de upload em dispositivos móveis
         const imageInput = document.getElementById('productImages');
         if (imageInput) {
             imageInput.setAttribute('capture', 'environment');
         }
     }
     
-    // Prevenir comportamento padrão em formulários móveis
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            // Garantir que o teclado seja fechado antes do envio
             if (window.innerWidth <= 768) {
                 document.activeElement.blur();
             }
