@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -32,8 +31,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contato">Contato</a>
                     </li>
-                    
-                    <!-- User Menu (shown when logged in) -->
                     <li class="nav-item user-menu" id="userMenu" style="display: none;">
                         <div class="user-info" onclick="toggleUserDropdown()">
                             <div class="user-avatar" id="userAvatar">
@@ -58,8 +55,6 @@
                             </a>
                         </div>
                     </li>
-                    
-                    <!-- Auth Links (shown when not logged in) -->
                     <li class="nav-item" id="loginLink">
                         <a class="nav-link" href="#" onclick="showAuthForm()">
                             <i class="bi bi-person-circle"></i> Entrar
@@ -70,7 +65,6 @@
         </div>
     </nav>
     
-    <!-- Hero Section -->
    <section id="home" class="hero">
     <div class="container">
         <h1>
@@ -84,7 +78,6 @@
     </div>
 </section>
     
-    <!-- Auth Form Section (Hidden by default) -->
     <section id="authSection" class="products" style="display: none;">
         <div class="container">
             <div class="auth-form">
@@ -100,7 +93,6 @@
                     <div class="auth-tab" onclick="switchAuthTab('register')">Cadastrar</div>
                 </div>
                 
-                <!-- Login Form -->
                 <div id="loginContent" class="auth-content active">
                     <form id="loginForm">
                         <div class="mb-3">
@@ -122,7 +114,6 @@
                     </div>
                 </div>
                 
-                <!-- Register Form -->
                 <div id="registerContent" class="auth-content">
                     <form id="registerForm">
                         <div class="mb-3">
@@ -154,7 +145,6 @@
         </div>
     </section>
     
-    <!-- Profile Section (Hidden by default) -->
     <section id="profileSection" class="products" style="display: none;">
         <div class="container">
             <div class="profile-section">
@@ -182,7 +172,6 @@
                     <div class="profile-tab" onclick="switchProfileTab('edit')">Editar</div>
                 </div>
                 
-                <!-- View Profile Content -->
                 <div id="viewProfileContent" class="profile-content active">
                     <div class="user-info-display">
                         <h5><i class="bi bi-person-circle"></i> Seus dados</h5>
@@ -201,7 +190,6 @@
                     </div>
                 </div>
                 
-                <!-- Edit Profile Content -->
                 <div id="editProfileContent" class="profile-content">
                     <form id="editProfileForm">
                         <div class="mb-3">
@@ -241,7 +229,6 @@
         </div>
     </section>
     
-    <!-- Add Product Form (Hidden by default) -->
     <section id="addProductSection" class="products" style="display: none;">
         <div class="container">
             <div class="product-form">
@@ -252,7 +239,6 @@
                     </button>
                 </div>
                 
-                <!-- User Info Display -->
                 <div class="user-info-display">
                     <h5><i class="bi bi-person-circle"></i> Seus dados de contato</h5>
                     <div class="user-info-item">
@@ -285,7 +271,6 @@
                         </div>
                     </div>
                     
-                    <!-- Product Condition -->
                     <div class="mb-3">
                         <label class="form-label">Estado do Produto</label>
                         <div class="filter-options">
@@ -301,7 +286,6 @@
                         <textarea class="form-control" id="productDescription" rows="3" placeholder="Descreva seu produto, estado, características, etc..." required></textarea>
                     </div>
                     
-                    <!-- Multiple Images Upload Section -->
                     <div class="mb-3">
                         <label class="form-label">Fotos do Produto</label>
                         <div class="multiple-upload-container">
@@ -324,7 +308,6 @@
         </div>
     </section>
     
-    <!-- Password Recovery Section (Hidden by default) -->
     <section id="recoverySection" class="products" style="display: none;">
         <div class="container">
             <div class="product-form">
@@ -348,7 +331,6 @@
         </div>
     </section>
     
-    <!-- Products Section -->
     <section id="produtos" class="products">
         <div class="container">
             <div class="section-title">
@@ -364,7 +346,6 @@
                 </div>
             </div>
             
-            <!-- Search Bar -->
             <div class="search-container">
                 <div class="search-input-group">
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nome, descrição ou vendedor..." onkeyup="searchProducts(event)">
@@ -374,15 +355,12 @@
                 </div>
             </div>
             
-            <!-- Filters -->
             <div class="filter-container">
-                <!-- Filter Toggle Button -->
                 <div class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
                     <span><i class="bi bi-funnel"></i> Filtros</span>
                     <i class="bi bi-chevron-down"></i>
                 </div>
                 
-                <!-- Filter Content (Hidden by default) -->
                 <div class="filter-content" id="filterContent">
                     <div class="row">
                         <div class="col-md-3">
@@ -432,12 +410,10 @@
                         </div>
                     </div>
                     
-                    <!-- Active Filters Display -->
                     <div id="activeFilters" class="active-filters" style="display: none;">
                         <span class="me-2">Filtros ativos:</span>
                     </div>
                     
-                    <!-- Clear Filters Button -->
                     <div class="mt-3">
                         <button class="clear-filters-btn" onclick="clearAllFilters()">
                             <i class="bi bi-x-circle"></i> Limpar todos os filtros
@@ -447,12 +423,10 @@
             </div>
             
             <div class="row" id="productsContainer">
-                <!-- Products will be dynamically loaded here -->
             </div>
         </div>
     </section>
     
-    <!-- About Section - Melhorada -->
     <section id="sobre" class="about">
         <div class="container">
             <div class="about-content">
@@ -497,7 +471,6 @@
         </div>
     </section>
     
-    <!-- Contact Section -->
     <section id="contato" class="contact">
         <div class="container">
             <div class="section-title">
@@ -539,7 +512,6 @@
         </div>
     </section>
     
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="social-links">
@@ -556,12 +528,10 @@
         </div>
     </footer>
     
-    <!-- WhatsApp Float Button -->
     <a href="https://wa.me/5512988990766" class="whatsapp-float" target="_blank">
         <i class="bi bi-whatsapp"></i>
     </a>
     
-    <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -582,7 +552,6 @@
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -607,7 +576,6 @@
         </div>
     </div>
     
-    <!-- Loading Modal -->
     <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -621,11 +589,9 @@
         </div>
     </div>
     
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
